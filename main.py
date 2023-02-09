@@ -99,3 +99,14 @@ if "--xticks" in sys.argv:
 else:
     xticks = None
 
+if "--yticks" in sys.argv:
+    if yrange_list is not None:
+        ytick_index = sys.argv.index("--yticks") +1
+        ytick = float(sys.argv[ytick_index])
+        yticks = np.arange(yrange_list[0], yrange_list[1], ytick)
+    else:
+        print("You Must Specify the Axes Range")
+        print("Please be sure to follow the proper format of <min>,<max>")
+else:
+    yticks = None
+
