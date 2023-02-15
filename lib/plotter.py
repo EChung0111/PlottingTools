@@ -5,8 +5,9 @@ import os
 
 class Lineplot:
 
-    def grapher(datafile,outputfile,delimiter=None,title="",xlabel="",ylabel="",label="",xscale=1,yscale=1,xrange=None,yrange=None,xticks=None,yticks=None,grid=None):
+    def grapher(datafile,outputfile,delimiter=None,title="",xlabel="",ylabel="",label=None,xscale=1,yscale=1,xrange=None,yrange=None,xticks=None,yticks=None,grid=None,linewidth=None):
         data_array = np.genfromtxt(datafile,dtype=float,delimiter=delimiter)
+        print(np.shape(data_array))
         xdata = data_array[:,0]
 
         xlist = []
@@ -14,8 +15,7 @@ class Lineplot:
             x = x*xscale
             xlist.append(x)
 
-            data_array = np.delete(data_array,0,1)
-            ydata = data_array
+            ydata = np.delete(data_array,0,1)
             ydatadim = ydata.ndim
             fig,ax = plt.subplots(1,1)
 
@@ -30,8 +30,12 @@ class Lineplot:
             for y in ycol:
                 y = y*yscale
                 ylist.append(y)
-            
-            ax.plot(xlist,ylist,label=label)
+            if label is not None:
+                label_current = label[col]
+            else:
+                label_current = None
+
+            ax.plot(xlist,ylist,label=label_current,linewidth=linewidth)
 
         ax.set_ylabel(ylabel)
         ax.set_xlabel(xlabel)
@@ -73,9 +77,11 @@ class Lineplot:
             else:
                 print("Invald option for grid")
                 print("Valid Grid Options: h,v,hv")
-
-        ax.legend()
+        if label is not None:
+            ax.legend()
                             
-        fig.suptitle(title)
+        ax.set_title(title)
         fig.tight_layout(pad=2)
         fig.savefig(os.path.join(outputfile),dpi=1000,bbox_inches="tight")
+        plt.clf()
+        plt.cla()
