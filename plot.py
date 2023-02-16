@@ -40,13 +40,27 @@ if "--help" not in sys.argv:
 
     if "--xscale" in sys.argv:
         xscale_index = sys.argv.index("--xscale") +1
-        xscale = float(sys.argv[xscale_index])
+        xscale = str(sys.argv[xscale_index])
+        if "log" in xscale:
+            base = xscale[3:]
+            if base == "e" or base == "":
+                base = None
+                xscale = ["log",base]
+            else:
+                xscale = ["log",float(base)]
+        else:
+            xscale = float(xscale)
     else:
         xscale = 1
 
     if "--yscale" in sys.argv:
         yscale_index = sys.argv.index("--yscale") +1
-        yscale = float(sys.argv[yscale_index])
+        yscale = str(sys.argv[yscale_index])
+        if "log" in yscale:
+            base = float(yscale[:3])
+            yscale = ["log",base]
+        else:
+            yscale = float(yscale)
     else:
         yscale = 1
 
@@ -128,7 +142,11 @@ if "--help" not in sys.argv:
     if "--label" in sys.argv:
         label_index = sys.argv.index("--label") +1
         label = str(sys.argv[label_index])
-        label_list = list(label.split(","))
+        if "," in label:
+            label_list = list(label.split(","))
+        else:
+            print("No Delimiter Found For Labels")
+            print("Please be sure to delimit your graph labels using commas")
     else:
         label_list = None
     
@@ -138,8 +156,19 @@ if "--help" not in sys.argv:
     else:
         linewidth = None
 
+    if "--color" in sys.argv:
+        color_index = sys.argv.index("--color") +1
+        color_str = str(sys.argv[color_index])
+        if "," in color_str:
+            color_list = list(color_str.split(","))
+        else:
+            print("No Delimiter Found for Colors")
+            print("Please be sure to delimit your graph colors using commas")
+    else:
+        color_list = None
+
     if graph_type == "line":
-        plot.Lineplot.grapher(datafile=os.path.join(working_directory,filein),outputfile=os.path.join(working_directory,output_file),delimiter=delim,title=graph_title,xlabel=xlabel,ylabel=ylabel,xrange=xrange_list,yrange=yrange_list,xticks=xticks,yticks=yticks,xscale=xscale,yscale=yscale,grid=grid_option,label=label_list,linewidth=linewidth)
+        plot.Lineplot.grapher(datafile=os.path.join(working_directory,filein),outputfile=os.path.join(working_directory,output_file),delimiter=delim,title=graph_title,xlabel=xlabel,ylabel=ylabel,xrange=xrange_list,yrange=yrange_list,xticks=xticks,yticks=yticks,xscale=xscale,yscale=yscale,grid=grid_option,label=label_list,linewidth=linewidth,color=color_list)
 
 else:
     help_message = """
@@ -166,6 +195,7 @@ You can use --help to see this page. Below you find some information regarding h
     --yscale <Scaling Factor>                       Specify scale on the y axis (Default is 1)
     --grid <h,v, or hv>                             Add horizontal and or vertical grids to the graph (Default is no grid)
     --linewidth <float>                             Specifies line width for line graphs (Default is linedwidth=3)
+    --color <color1,color2,...,colorn>              Specifies colors for graph
 
     Data Format Optioms:
     --delimiter <delimiter option>                  Specify delimiter to seperate data entries in data file (Default is whiteshpace)
